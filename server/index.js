@@ -1,11 +1,15 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const PORT = process.env.PORT || 3000;
+const cors = require('cors');
+
+const PORT = process.env.PORT || 50000;
 const app = express();
 const jsonParser = bodyParser.json();
 
-app.get('/createlogin', jsonParser, (req, res) => {
-  res.send('Testing login microservice');
+app.use(cors());
+
+app.get('/test', jsonParser, (req, res) => {
+  res.send('If you see this, test is successful');
 });
 
 app.post('/createlogin', jsonParser, (req, res) => {

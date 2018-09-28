@@ -1,0 +1,23 @@
+version: 0.1
+
+phases:
+  pre_build:
+    commands:
+      - echo Logging in to Amazon ECR...
+      - $(aws ecr get-login --no-include-email --region us-east-2)
+  build:
+    commands:
+      - echo Build started on `date`
+      - echo Building the Docker image...
+      - docker build -t login-ecr-repo .
+      - docker tag login-ecr-repo:latest 103274529779.dkr.ecr.us-east-2.amazonaws.com/login-ecr-repo:latest
+  post_build:
+    commands:
+      - echo Build completed on `date`
+      - echo Pushing the Docker image...
+      - docker push 103274529779.dkr.ecr.us-east-2.amazonaws.com/login-ecr-repo:latest
+      # - echo docker run -d -e NODE_ENV=production -p 80:3000 signup
+      - echo Writing image definitions file...
+      - printf '[{"name":"login-container","imageUri":"%s"}]' 103274529779.dkr.ecr.us-east-2.amazonaws.com/login-ecr-repo:latest > imagedefinitions.json
+artifacts:
+    files: imagedefinitions.json
