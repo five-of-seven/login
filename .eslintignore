@@ -1,0 +1,11 @@
+
+# Dependency directories
+node_modules/
+
+# webpack build output
+dist/
+
+# Test files
+client/__tests__
+
+buildspec.yml
