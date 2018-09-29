@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const db = require('../database/dbUtils.js');
 
 const PORT = process.env.PORT || 50000;
 const app = express();
@@ -13,8 +14,8 @@ app.get('/test', jsonParser, (req, res) => {
 });
 
 app.post('/createlogin', jsonParser, (req, res) => {
-  console.log('Request in login MS is...', req.body);
-  res.send('1234');
+  db.createUser(req.body.password)
+    .then(userId => res.send(userId.toString()), error => res.send(error));
 });
 
 app.listen(PORT);
