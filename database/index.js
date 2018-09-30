@@ -38,7 +38,14 @@ dbConnection
   })
   .catch((err) => {
     console.error('Unable to connect to the database:', err);
-    logger.info({ connection: `** Unable to connect to the database: err is ${err.msg}` });
+    logger.info({ connection: `** Unable to connect to the database: err is ${err.message}` });
+    logger.info({
+      LOGIN_DB_HOST,
+      LOGIN_DB_HOST_PORT,
+      LOGIN_DB_NAME,
+      LOGIN_DB_USER,
+      LOGIN_DB_PASSWORD,
+    });
   });
 
 const UserIdPassword = dbConnection.define('userIdPassword', {
