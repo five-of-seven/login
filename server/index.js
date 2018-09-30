@@ -10,7 +10,7 @@ const jsonParser = bodyParser.json();
 app.use(cors());
 
 app.get('/test', jsonParser, (req, res) => {
-  res.send('If you see this, test is successful. Changes to test AWS CD');
+  res.send('If you see this, test is successful. Changes 8:36pm Sept 29');
 });
 
 app.post('/createlogin', jsonParser, (req, res) => {
