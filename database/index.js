@@ -1,4 +1,5 @@
 const Sequelize = require('sequelize');
+const { logger } = require('../server/logger.js');
 const {
   LOGIN_DB_NAME,
   LOGIN_DB_USER,
@@ -28,6 +29,17 @@ const dbConnection = new Sequelize({
     timestamps: true,
   },
 });
+
+dbConnection
+  .authenticate()
+  .then(() => {
+    console.log('Connection has been established successfully.');
+    logger.info({ connection: 'vv Connection has been established successfully.' });
+  })
+  .catch((err) => {
+    console.error('Unable to connect to the database:', err);
+    logger.info({ connection: `** Unable to connect to the database: err is ${err.msg}` });
+  });
 
 const UserIdPassword = dbConnection.define('userIdPassword', {
   userId: {
