@@ -61,5 +61,10 @@ const UserIdPassword = dbConnection.define('userIdPassword', {
   },
 });
 
+
+UserIdPassword.sync()
+  .then(() => { console.log('Successful syncing....'); logger.info({ sync: 'Successful syncing....' }); })
+  .catch((error) => { console.log(`Failed syncing....error is ${error.message}`); logger.info({ sync: `Failed syncing....error is ${error.message}` }); });
+
 module.exports.dbConnection = dbConnection;
 module.exports.UserIdPassword = UserIdPassword;
