@@ -33,25 +33,26 @@ app.post('/createlogin', jsonParser, (req, res) => {
       //   // headers: { 'Content-Type': 'application/json' },
       // };
 
-      let jsonStringBody = { username: userId.toString() };
-      let options = {
+      const jsonStringBody = { username: userId.toString() };
+      const options = {
         url: `${API_GATEWAY_URL}/users`,
         json: true,
         method: 'POST',
         'User-Agent': 'request',
         body: jsonStringBody,
         'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': true
+        'Access-Control-Allow-Origin': true,
       };
 
-  request(options, function(err, response, body){
-  if(err){
-    console.log('error in request module', err);
-  }else{
-    console.log('Response body ....', body);
-    console.log('Username is  ....', userId.toString());
-  }
-})
+      request(options, (err, response, body) => {
+        if (err) {
+          console.log('error in request module', err);
+        } else {
+          console.log('Response body ....', body);
+          console.log('Username is  ....', userId.toString());
+          res.json(body);
+        }
+      });
 
       // fetch(`${API_GATEWAY_URL}/users`, apiGatewayCreateuserOptions)
       // fetch('http://localhost:9876/users', apiGatewayCreateuserOptions)
