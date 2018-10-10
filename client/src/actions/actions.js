@@ -108,7 +108,7 @@ export function logIntoAccount() {
       };
 
       dispatch(startAccountLogin());
-      return fetch('/login', options)
+      return fetch('/signingin', options)
         .then(
           response => response.json(),
           (error) => { console.log('An error occured...', error.message); },
