@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 // const fetch = require('node-fetch');
 // const bufferify = require('json-bufferify');
 const request = require('request');
+const { getUserId } = require('./utils.js');
 const db = require('../database/dbUtils.js');
 const { logger } = require('./logger.js');
 
@@ -53,7 +54,22 @@ app.post('/createlogin', jsonParser, (req, res) => {
 app.post('/signingin', jsonParser, (req, res) => {
   console.log('Request is..', req);
   logger.info({ 'requested user': req.body });
-  res.send(req.body);
+  const {
+    email,
+    password,
+  } = req.body;
+
+  getUserId(email)
+    .then((userId) => {
+      console.log('userId is ', userId);
+      if (userId === 'false') {
+        res.send(JSON.stringify({ userId: null })); // NEEDS TO BE CHANGED LATER
+      } else {
+        res.send(JSON.stringify({ userId }));
+      }
+    });
+  // res.status(401);
+  // res.end();
 });
 
 app.get('/signedin', jsonParser, (req, res) => {
