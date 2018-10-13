@@ -28,8 +28,18 @@ app.post('/createlogin', jsonParser, (req, res) => {
   db.createUser(req.body.password)
     .then((userId) => {
       const jsonStringBody = { username: userId.toString() };
-      const options = {
-        url: `${API_GATEWAY_URL}/users`,
+      // const expressGatewayOptions = {
+      //   url: `${API_GATEWAY_URL}/users`,
+      //   json: true,
+      //   method: 'POST',
+      //   'User-Agent': 'request',
+      //   body: jsonStringBody,
+      //   'Content-Type': 'application/json',
+      //   'Access-Control-Allow-Origin': true,
+      // };
+      console.log(jsonStringBody);
+      const kongAPIGatewayOptions = {
+        url: `${API_GATEWAY_URL}/consumers`,
         json: true,
         method: 'POST',
         'User-Agent': 'request',
@@ -38,7 +48,7 @@ app.post('/createlogin', jsonParser, (req, res) => {
         'Access-Control-Allow-Origin': true,
       };
 
-      request(options, (err, response, body) => {
+      request(kongAPIGatewayOptions, (err, response, body) => {
         if (err) {
           console.log('error in request module', err);
         } else {
