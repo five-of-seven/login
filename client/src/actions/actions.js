@@ -10,6 +10,14 @@ export const LOG_INTO_ACCOUNT_FAILURE = 'LOG_INTO_ACCOUNT_FAILURE';
 export const BLOCK_LOG_INTO_ACCOUNT_NO_EMAIL = 'BLOCK_LOG_INTO_ACCOUNT_NO_EMAIL';
 export const BLOCK_LOG_INTO_ACCOUNT_NO_PASSWORD = 'BLOCK_LOG_INTO_ACCOUNT_NO_PASSWOR';
 export const REQUIRED_FIELD_FILLED = 'REQUIRED_FIELD_FILLED';
+// export const REDIRECT_TO_HOME_PAGE = 'REDIRECT_TO_HOME_PAGE';
+
+// export function redirectToHomePage(userId) {
+//   return {
+//     type: REDIRECT_TO_HOME_PAGE,
+//     userId,
+//   };
+// }
 
 export function updateEmail(email) {
   return {
@@ -99,7 +107,7 @@ export function logIntoAccount() {
         password,
       };
       const options = {
-        method: 'POST',
+        method: 'GET',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -107,8 +115,10 @@ export function logIntoAccount() {
         credentials: 'same-origin',
       };
 
+      const getUrl = `/signingin?email=${email}&password=${password}`;
       dispatch(startAccountLogin());
-      return fetch('/signingin', options)
+      // return fetch('/signingin', options)
+      return fetch(getUrl)
         .then(
           response => response.json(),
           (error) => { console.log('An error occured...', error.message); },
