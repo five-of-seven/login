@@ -71,6 +71,8 @@ app.get('/signingin', jsonParser, (req, res) => {
     password,
   } = req.query;
 
+  console.log(`testing ADMIN URL....${API_ADMIN_GATEWAY_URL}`);
+  console.log(`testing URL....${API_GATEWAY_URL}`);
   getUserId(email)
     .then((userId) => {
       console.log('userId is ', userId);
@@ -78,7 +80,7 @@ app.get('/signingin', jsonParser, (req, res) => {
         res.send(JSON.stringify({ userId: null })); // NEEDS TO BE CHANGED LATER
       } else {
         // CHECK FOR PASSWORD HERE
-        console.log(`testing URL....${API_ADMIN_GATEWAY_URL}`);
+
         const kongAPIGatewayOptionsCreateCredential = {
           url: `${API_ADMIN_GATEWAY_URL}/consumers/${userId}/jwt`,
           method: 'POST',
@@ -142,8 +144,9 @@ app.get('/signingin', jsonParser, (req, res) => {
 });
 
 app.get('/signedintest', jsonParser, (req, res) => {
-  logger.info({ 'received token at /signedintest is': req.query.token });
-  res.send('you are now signed into /signedintest');
+  // logger.info({ 'received token at /signedintest is': req.query.token });
+  console.log({ 'received token at /signedintest is': req.query.token });
+  res.send(`you are now signed into /signedintest with token ${req.query.token}`);
 });
 
 app.get('/signedinhome', jsonParser, (req, res) => {
