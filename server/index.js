@@ -99,7 +99,7 @@ app.get('/signingin', jsonParser, (req, res) => {
           'Content-Type': 'application/x-www-form-urlencoded',
           'Access-Control-Allow-Origin': true,
         };
-        const kongAPIgatewaySendJwt;
+        let kongAPIgatewaySendJwt;
 
         // DELETE ANY EXISTING CREDENTIAL
         // curl -X GET http://kong:8001/consumers/{consumer}/jwt
