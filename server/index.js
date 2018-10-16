@@ -145,7 +145,8 @@ app.get('/signingin', jsonParser, (req, res) => {
           .then(response => response.text())
           .then((text) => {
             console.log(text);
-            res.send(text);
+            // res.send(text);
+            return fetch(`${API_GATEWAY_URL}/home`, kongAPIgatewaySendJwt);
           });
       }
     });
