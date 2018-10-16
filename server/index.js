@@ -70,6 +70,7 @@ app.get('/signingin', jsonParser, (req, res) => {
     email,
     password,
   } = req.query;
+  let jwtToken;
 
   console.log(`testing ADMIN URL....${API_ADMIN_GATEWAY_URL}`);
   console.log(`testing URL....${API_GATEWAY_URL}`);
@@ -132,6 +133,7 @@ app.get('/signingin', jsonParser, (req, res) => {
 
             // SEND THE JWT BACK
             // res.json({ token });
+            jwtToken = token;
             return token;
           })
           .then((token) => {
@@ -146,12 +148,16 @@ app.get('/signingin', jsonParser, (req, res) => {
           .then((text) => {
             console.log(text);
             // res.send(text);
-            return fetch(`${API_GATEWAY_URL}/home`, kongAPIgatewaySendJwt);
-          })
-          .then((response) => {
-            console.log('response from /home is...', response);
-            res.send(response);
+            console.log('jwtToken is...', jwtToken);
+            res.header('Authorization', `Bearer ${jwtToken}`);
+            console.log('res after header set is...', res);
+            res.redirect(`${API_GATEWAY_URL}/home`);
+            // return fetch(`${API_GATEWAY_URL}/home`, kongAPIgatewaySendJwt);
           });
+          // .then((response) => {
+          //   console.log('response from /home is...', response);
+          //   res.send(response);
+          // });
       }
     });
 });
