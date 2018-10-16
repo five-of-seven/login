@@ -118,7 +118,7 @@ export function logIntoAccount() {
       const getUrl = `/signingin?email=${email}&password=${password}`;
       dispatch(startAccountLogin());
       // return fetch('/signingin', options)
-      return fetch(getUrl)
+      return fetch(getUrl, { redirect: 'follow' })
         .then(
           (response) => {
             console.log('response to signingin endpoint is...', response);
