@@ -151,7 +151,7 @@ app.get('/signingin', jsonParser, (req, res) => {
             console.log('jwtToken is...', jwtToken);
             res.header('Authorization', `Bearer ${jwtToken}`);
             console.log('res after header set is...', res);
-            res.redirect(`${API_GATEWAY_URL}/home?jwt=${jwtToken}`);
+            res.redirect(`${API_GATEWAY_URL}/homepage?jwt=${jwtToken}`);
             // return fetch(`${API_GATEWAY_URL}/home`, kongAPIgatewaySendJwt);
           });
           // .then((response) => {
