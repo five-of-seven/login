@@ -123,7 +123,10 @@ export function logIntoAccount() {
           (response) => {
             console.log('response to signingin endpoint is...', response);
             // response.json()
-            return 'you are logged into homepage';
+            return {
+              success: 'you are logged into homepage',
+              url: response.url,
+            };
           },
           (error) => { console.log('An error occured...', error.message); },
         )
@@ -136,7 +139,8 @@ export function logIntoAccount() {
             }
             dispatch(stopAccountLogin());
             dispatch(completeAccountLogin());
-            dispatch(logIntoAccountSuccess(response));
+            dispatch(logIntoAccountSuccess(response.success));
+            window.location.href = response.url;
           },
         );
     }
