@@ -100,6 +100,7 @@ app.get('/signingin', jsonParser, (req, res) => {
           'Access-Control-Allow-Origin': true,
         };
 
+
         // DELETE ANY EXISTING CREDENTIAL
         // curl -X GET http://kong:8001/consumers/{consumer}/jwt
         fetch(`${API_ADMIN_GATEWAY_URL}/consumers/${userId}/jwt`)
@@ -133,7 +134,14 @@ app.get('/signingin', jsonParser, (req, res) => {
             // res.json({ token });
             return token;
           })
-          .then(token => fetch(`${API_GATEWAY_URL}/signedintest?jwt=${token}`))
+          .then((token) => {
+            const kongAPIgatewaySendJwt = {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            };
+            return fetch(`${API_GATEWAY_URL}/signedintest`, kongAPIgatewaySendJwt);
+          })//?jwt=${token}`))
           .then(response => response.text())
           .then((text) => {
             console.log(text);
@@ -143,9 +151,9 @@ app.get('/signingin', jsonParser, (req, res) => {
     });
 });
 
-app.get('/signedintest', jsonParser, (req, res) => {
+app.get('/signedintest', (req, res) => {
   // logger.info({ 'received token at /signedintest is': req.query.token });
-  console.log({ 'received token at /signedintest is': req.query.token });
+  console.log('received token at /signedintest is...', req.header('Authorization'));
   res.send(`you are now signed into /signedintest with token ${req.query.token}`);
 });
 
