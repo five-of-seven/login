@@ -120,7 +120,11 @@ export function logIntoAccount() {
       // return fetch('/signingin', options)
       return fetch(getUrl)
         .then(
-          response => response.json(),
+          (response) => {
+            console.log('response to signingin endpoint is...', response);
+            // response.json()
+            return 'you are logged into homepage';
+          },
           (error) => { console.log('An error occured...', error.message); },
         )
         .then(
