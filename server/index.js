@@ -141,12 +141,16 @@ app.get('/signingin', jsonParser, (req, res) => {
               },
             };
             return fetch(`${API_GATEWAY_URL}/signedintest`, kongAPIgatewaySendJwt);
-          })//?jwt=${token}`))
+          })// ?jwt=${token}`))
           .then(response => response.text())
           .then((text) => {
             console.log(text);
             // res.send(text);
             return fetch(`${API_GATEWAY_URL}/home`, kongAPIgatewaySendJwt);
+          })
+          .then((response) => {
+            console.log('response from /home is...', response);
+            res.send(response);
           });
       }
     });
