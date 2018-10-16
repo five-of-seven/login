@@ -108,9 +108,9 @@ export function logIntoAccount() {
       };
       const options = {
         method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        // headers: {
+        //   'Content-Type': 'application/json',
+        // },
         body: JSON.stringify(data),
         credentials: 'same-origin',
       };
