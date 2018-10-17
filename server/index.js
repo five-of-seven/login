@@ -66,7 +66,7 @@ app.get('/signingin', jsonParser, (req, res) => {
         res.send(JSON.stringify({ userId: null })); // NEEDS TO BE CHANGED LATER
       } else {
         // CHECK FOR PASSWORD HERE
-        if (db.doesPassWordMatch(userId, password)) {
+        if (db.doesPasswordMatch(userId, password)) {
           const kongAPIGatewayOptionsCreateCredential = {
             url: `${API_ADMIN_GATEWAY_URL}/consumers/${userId}/jwt`,
             method: 'POST',
