@@ -68,74 +68,78 @@ app.get('/signingin', jsonParser, (req, res) => {
         // CHECK FOR PASSWORD HERE
         const shouldSignInUser = db.doesPasswordMatch(userId, password);
         console.log('shouldSignInUser...', shouldSignInUser);
-        if (shouldSignInUser) {
-          const kongAPIGatewayOptionsCreateCredential = {
-            url: `${API_ADMIN_GATEWAY_URL}/consumers/${userId}/jwt`,
-            method: 'POST',
-            'User-Agent': 'request',
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'Access-Control-Allow-Origin': true,
-          };
-          const kongAPIGatewayOptionsDeleteCredential = {
-            method: 'DELETE',
-            'User-Agent': 'request',
-            'Access-Control-Allow-Origin': true,
-          };
-          let kongAPIgatewaySendJwt;
-          // DELETE ANY EXISTING CREDENTIAL
-          fetch(`${API_ADMIN_GATEWAY_URL}/consumers/${userId}/jwt`)
-            .then(response => response.json())
-            .then((credentialList) => {
-              if (credentialList.total > 1) {
-                console.log('too many credentials');
-                res.send({ error: `error: too many credentials for the user, ${userId}` });
-                return 1;
-              } else if (credentialList.total === 1) {
-                const deletUrl = `${API_ADMIN_GATEWAY_URL}/consumers/${userId}/jwt/${credentialList.data[0].id}`;
-                console.log(`deleting credential...${deletUrl}`);
-                return fetch(deletUrl, kongAPIGatewayOptionsDeleteCredential);
-              }
-              return 2;
-            })
-            .then(() => fetch(`${API_ADMIN_GATEWAY_URL}/consumers/${userId}/jwt`, kongAPIGatewayOptionsCreateCredential))
-            .then(response => response.json())
-            .then((credential) => {
-              console.log('Created Credential is...', credential);
-              const {
-                id: credentialId,
-                secret,
-                key,
-              } = credential;
-              // CRETATE THE JWT WITH THE CREDENTIALS FROM KONG
-              const token = createJWT(userId, credentialId, secret, key);
-              console.log('created token is...', token);
-              jwtToken = token;
-              return token;
-            })
-            .then((token) => {
-              kongAPIgatewaySendJwt = {
-                headers: {
-                  Authorization: `Bearer ${token}`,
-                },
+        shouldSignInUser
+          .then((isMatch) => {
+            if (isMatch) {
+              const kongAPIGatewayOptionsCreateCredential = {
+                url: `${API_ADMIN_GATEWAY_URL}/consumers/${userId}/jwt`,
+                method: 'POST',
+                'User-Agent': 'request',
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Access-Control-Allow-Origin': true,
               };
-              return fetch(`${API_GATEWAY_URL}/signedintest`, kongAPIgatewaySendJwt);
-            })// ?jwt=${token}`))
-            .then(response => response.text())
-            .then((text) => {
-              console.log(text);
-              // res.send(text);
-              console.log('jwtToken is...', jwtToken);
-              res.header('Authorization', `Bearer ${jwtToken}`);
-              console.log('res after header set is...', res);
-              res.status(302);
-              res.redirect(`${API_GATEWAY_URL}/homepage?userId=${userId}&jwt=${jwtToken}`);
-              // return fetch(`${API_GATEWAY_URL}/home`, kongAPIgatewaySendJwt);
-            });
-        } else {
-          console.log('password does not match');
-          res.status(401);
-          res.send('password does not match');
-        }
+              const kongAPIGatewayOptionsDeleteCredential = {
+                method: 'DELETE',
+                'User-Agent': 'request',
+                'Access-Control-Allow-Origin': true,
+              };
+              let kongAPIgatewaySendJwt;
+              // DELETE ANY EXISTING CREDENTIAL
+              fetch(`${API_ADMIN_GATEWAY_URL}/consumers/${userId}/jwt`)
+                .then(response => response.json())
+                .then((credentialList) => {
+                  if (credentialList.total > 1) {
+                    console.log('too many credentials');
+                    res.send({ error: `error: too many credentials for the user, ${userId}` });
+                    return 1;
+                  } else if (credentialList.total === 1) {
+                    const deletUrl = `${API_ADMIN_GATEWAY_URL}/consumers/${userId}/jwt/${credentialList.data[0].id}`;
+                    console.log(`deleting credential...${deletUrl}`);
+                    return fetch(deletUrl, kongAPIGatewayOptionsDeleteCredential);
+                  }
+                  return 2;
+                })
+                .then(() => fetch(`${API_ADMIN_GATEWAY_URL}/consumers/${userId}/jwt`, kongAPIGatewayOptionsCreateCredential))
+                .then(response => response.json())
+                .then((credential) => {
+                  console.log('Created Credential is...', credential);
+                  const {
+                    id: credentialId,
+                    secret,
+                    key,
+                  } = credential;
+                  // CRETATE THE JWT WITH THE CREDENTIALS FROM KONG
+                  const token = createJWT(userId, credentialId, secret, key);
+                  console.log('created token is...', token);
+                  jwtToken = token;
+                  return token;
+                })
+                .then((token) => {
+                  kongAPIgatewaySendJwt = {
+                    headers: {
+                      Authorization: `Bearer ${token}`,
+                    },
+                  };
+                  return fetch(`${API_GATEWAY_URL}/signedintest`, kongAPIgatewaySendJwt);
+                })// ?jwt=${token}`))
+                .then(response => response.text())
+                .then((text) => {
+                  console.log(text);
+                  // res.send(text);
+                  console.log('jwtToken is...', jwtToken);
+                  res.header('Authorization', `Bearer ${jwtToken}`);
+                  console.log('res after header set is...', res);
+                  res.status(302);
+                  res.redirect(`${API_GATEWAY_URL}/homepage?userId=${userId}&jwt=${jwtToken}`);
+                  // return fetch(`${API_GATEWAY_URL}/home`, kongAPIgatewaySendJwt);
+                });
+            } else {
+              console.log('password does not match');
+              res.status(401);
+              res.send('password does not match');
+            }
+          })
+          .catch(error => console.log('error checking password....', error.message));
       }
     });
 });
