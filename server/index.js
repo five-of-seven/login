@@ -159,6 +159,49 @@ app.get('/signingin', jsonParser, (req, res) => {
     });
 });
 
+
+app.post('/logout', jsonParser, (req, res) => {
+  const {
+    userId,
+  } = req.body.data;
+
+  const {
+    jwt
+  } = req.query;
+
+  console.log('requested logout for user...', userId);
+  console.log('jwt for the user logging out is...', jwt);
+  console.log(`testing ADMIN URL....${API_ADMIN_GATEWAY_URL}`);
+  console.log(`testing URL....${API_GATEWAY_URL}`);
+
+  const kongAPIGatewayOptionsDeleteCredential = {
+    method: 'DELETE',
+    'User-Agent': 'request',
+    'Access-Control-Allow-Origin': true,
+  };
+
+  // DELETE ANY EXISTING CREDENTIAL
+  // curl -X GET http://kong:8001/consumers/{consumer}/jwt
+  fetch(`${API_ADMIN_GATEWAY_URL}/consumers/${userId}/jwt`)
+    .then(response => response.json())
+    .then((credentialList) => {
+      if (credentialList.total > 1) {
+        console.log('too many credentials');
+        res.send({ error: `error: too many credentials for the user, ${userId}` });
+        return 1;
+      } else if (credentialList.total === 1) {
+        const deletUrl = `${API_ADMIN_GATEWAY_URL}/consumers/${userId}/jwt/${credentialList.data[0].id}`;
+        console.log(`deleting credential...${deletUrl}`);
+        return fetch(deletUrl, kongAPIGatewayOptionsDeleteCredential);
+      }
+      return 2;
+    })
+    .then(() => {
+      res.status(302);
+      res.redirect(`${API_GATEWAY_URL}/`);
+    });
+});
+
 app.get('/signedintest', (req, res) => {
   // logger.info({ 'received token at /signedintest is': req.query.token });
   console.log('received token at /signedintest is...', req.header('Authorization'));
