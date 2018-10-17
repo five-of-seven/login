@@ -94,12 +94,12 @@ app.get('/signingin', jsonParser, (req, res) => {
           'User-Agent': 'request',
           'Access-Control-Allow-Origin': true,
         };
-        const kongAPIGatewayOptionsSignedInTest = {
-          method: 'GET',
-          'User-Agent': 'request',
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'Access-Control-Allow-Origin': true,
-        };
+        // const kongAPIGatewayOptionsSignedInTest = {
+        //   method: 'GET',
+        //   'User-Agent': 'request',
+        //   'Content-Type': 'application/x-www-form-urlencoded',
+        //   'Access-Control-Allow-Origin': true,
+        // };
         let kongAPIgatewaySendJwt;
 
         // DELETE ANY EXISTING CREDENTIAL
@@ -152,13 +152,9 @@ app.get('/signingin', jsonParser, (req, res) => {
             res.header('Authorization', `Bearer ${jwtToken}`);
             console.log('res after header set is...', res);
             res.status(302);
-            res.redirect(`${API_GATEWAY_URL}/homepage?jwt=${jwtToken}`);
+            res.redirect(`${API_GATEWAY_URL}/homepage?userId=${userId}&jwt=${jwtToken}`);
             // return fetch(`${API_GATEWAY_URL}/home`, kongAPIgatewaySendJwt);
           });
-          // .then((response) => {
-          //   console.log('response from /home is...', response);
-          //   res.send(response);
-          // });
       }
     });
 });
