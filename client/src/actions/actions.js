@@ -140,7 +140,8 @@ export function logIntoAccount() {
             dispatch(stopAccountLogin());
             dispatch(completeAccountLogin());
             dispatch(logIntoAccountSuccess(response.success));
-            window.location.href = response.url;
+            // window.location.href = response.url;
+            window.top.location = response.url;
           },
         );
     }
