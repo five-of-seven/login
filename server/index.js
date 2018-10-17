@@ -197,6 +197,7 @@ app.post('/logout', jsonParser, (req, res) => {
       return 2;
     })
     .then(() => {
+      console.log('redirecting now....');
       res.status(302);
       res.redirect(`${API_GATEWAY_URL}/`);
     });
