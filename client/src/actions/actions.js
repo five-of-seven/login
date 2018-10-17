@@ -121,11 +121,18 @@ export function logIntoAccount() {
       return fetch(getUrl, { redirect: 'follow' })
         .then(
           (response) => {
+            console.log('signingin response status is...', response.status);
             console.log('response to signingin endpoint is...', response);
             // response.json()
+            if (response.status !== 401) {
+              return {
+                loggedin: true,
+                url: response.url,
+              };
+            }
             return {
-              success: 'you are logged into homepage',
-              url: response.url,
+              loggedin: false,
+              url: null,
             };
           },
           (error) => { console.log('An error occured...', error.message); },
@@ -139,9 +146,12 @@ export function logIntoAccount() {
             }
             dispatch(stopAccountLogin());
             dispatch(completeAccountLogin());
-            dispatch(logIntoAccountSuccess(response.success));
-            // window.location.href = response.url;
-            window.top.location = response.url;
+            if (response.loggedin) {
+              dispatch(logIntoAccountSuccess(response.success));
+              window.top.location = response.url;
+            } else {
+              console.log('authentication failure');
+            }
           },
         );
     }

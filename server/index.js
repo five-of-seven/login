@@ -66,7 +66,9 @@ app.get('/signingin', jsonParser, (req, res) => {
         res.send(JSON.stringify({ userId: null })); // NEEDS TO BE CHANGED LATER
       } else {
         // CHECK FOR PASSWORD HERE
-        if (db.doesPasswordMatch(userId, password)) {
+        const shouldSignInUser = db.doesPasswordMatch(userId, password);
+        console.log('shouldSignInUser...', shouldSignInUser);
+        if (shouldSignInUser) {
           const kongAPIGatewayOptionsCreateCredential = {
             url: `${API_ADMIN_GATEWAY_URL}/consumers/${userId}/jwt`,
             method: 'POST',
@@ -130,6 +132,8 @@ app.get('/signingin', jsonParser, (req, res) => {
               // return fetch(`${API_GATEWAY_URL}/home`, kongAPIgatewaySendJwt);
             });
         } else {
+          console.log('password does not match');
+          res.status(401);
           res.send('password does not match');
         }
       }
