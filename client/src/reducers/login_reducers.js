@@ -46,6 +46,14 @@ export function logIntoAccountFailureReducer(state = null, action) {
   }
 }
 
+export function failureReasonReducer(state = null, action) {
+  switch (action.type) {
+    case LOG_INTO_ACCOUNT_FAILURE:
+      return action.reason;
+    default:
+      return state;
+  }
+}
 
 export function emailEntryChecker(state = false, action) {
   switch (action.type) {
