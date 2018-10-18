@@ -63,7 +63,9 @@ app.get('/signingin', jsonParser, (req, res) => {
     .then((userId) => {
       console.log('userId is ', userId);
       if (userId === 'false') {
-        res.send(JSON.stringify({ userId: null })); // NEEDS TO BE CHANGED LATER
+        console.log('There is no such user with the email...', email);
+        res.json({ status: false, reason: 'email or password doesn\'t match' });
+        // res.send(JSON.stringify({ userId: null })); // NEEDS TO BE CHANGED LATER
       } else {
         // CHECK FOR PASSWORD HERE
         const shouldSignInUser = db.doesPasswordMatch(userId, password);
@@ -131,12 +133,12 @@ app.get('/signingin', jsonParser, (req, res) => {
                   console.log('res after header set is...', res);
                   res.status(302);
                   res.redirect(`${API_GATEWAY_URL}/homepage?userId=${userId}&jwt=${jwtToken}`);
-                  // return fetch(`${API_GATEWAY_URL}/home`, kongAPIgatewaySendJwt);
                 });
             } else {
               console.log('password does not match');
               res.status(401);
-              res.send('password does not match');
+              res.json({ status: false, reason: 'email or password doesn\'t match' });
+              // res.send('password does not match');
             }
           })
           .catch(error => console.log('error checking password....', error.message));
@@ -193,12 +195,5 @@ app.get('/signedintest', (req, res) => {
   console.log('received token at /signedintest is...', req.header('Authorization'));
   res.send(`you are now signed into /signedintest with token ${req.query.token}`);
 });
-
-app.get('/signedinhome', jsonParser, (req, res) => {
-  console.log('Request is..', req);
-  logger.info({ 'requested user': req.body });
-  res.send(req.body);
-});
-
 
 app.listen(PORT);

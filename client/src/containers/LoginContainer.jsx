@@ -19,10 +19,12 @@ const mapStateToProps = ({
   showPassword,
   emailNotEntered,
   passwordNotEntered,
+  loginFailureReason,
 }) => ({
   showPassword,
   emailNotEntered,
   passwordNotEntered,
+  loginFailureReason,
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Login);

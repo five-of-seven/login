@@ -40,6 +40,7 @@ const Login = ({
   showPassword,
   emailNotEntered,
   passwordNotEntered,
+  loginFailureReason,
 }) => (
   <div>
     <form>
@@ -95,6 +96,9 @@ const Login = ({
           Login
           <Icon><AccountBox /></Icon>
         </Button>
+      </Grid>
+      <Grid>
+        {loginFailureReason !== null ? <InputLabel htmlFor="login-error">{`Login failed, ${loginFailureReason}`}</InputLabel> : null}
       </Grid>
     </form>
   </div>

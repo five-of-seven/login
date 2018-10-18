@@ -10,14 +10,7 @@ export const LOG_INTO_ACCOUNT_FAILURE = 'LOG_INTO_ACCOUNT_FAILURE';
 export const BLOCK_LOG_INTO_ACCOUNT_NO_EMAIL = 'BLOCK_LOG_INTO_ACCOUNT_NO_EMAIL';
 export const BLOCK_LOG_INTO_ACCOUNT_NO_PASSWORD = 'BLOCK_LOG_INTO_ACCOUNT_NO_PASSWOR';
 export const REQUIRED_FIELD_FILLED = 'REQUIRED_FIELD_FILLED';
-// export const REDIRECT_TO_HOME_PAGE = 'REDIRECT_TO_HOME_PAGE';
 
-// export function redirectToHomePage(userId) {
-//   return {
-//     type: REDIRECT_TO_HOME_PAGE,
-//     userId,
-//   };
-// }
 
 export function updateEmail(email) {
   return {
@@ -84,10 +77,10 @@ export function logIntoAccountSuccess(successMessage) {
   };
 }
 
-export function logIntoAccountFailure(successMessage) {
+export function logIntoAccountFailure(reason) {
   return {
     type: LOG_INTO_ACCOUNT_FAILURE,
-    successMessage,
+    reason,
   };
 }
 
@@ -106,54 +99,43 @@ export function logIntoAccount() {
         email,
         password,
       };
-      const options = {
-        method: 'GET',
-        // headers: {
-        //   'Content-Type': 'application/json',
-        // },
-        body: JSON.stringify(data),
-        credentials: 'same-origin',
-      };
 
       const getUrl = `/signingin?email=${email}&password=${password}`;
       dispatch(startAccountLogin());
-      // return fetch('/signingin', options)
       return fetch(getUrl, { redirect: 'follow' })
-        .then(
-          (response) => {
-            console.log('signingin response status is...', response.status);
-            console.log('response to signingin endpoint is...', response);
-            // response.json()
-            if (response.status !== 401) {
-              return {
-                loggedin: true,
-                url: response.url,
-              };
-            }
-            return {
-              loggedin: false,
-              url: null,
-            };
-          },
-          (error) => { console.log('An error occured...', error.message); },
-        )
-        .then(
-          (response) => {
-            if (response instanceof Error) {
-              dispatch(stopAccountLogin());
-              dispatch(completeAccountLogin());
-              dispatch(logIntoAccountFailure());
-            }
-            dispatch(stopAccountLogin());
+        .then((response) => {
+          console.log('signingin response status is...', response.status);
+          console.log('response to signingin endpoint is...', response);
+          dispatch(stopAccountLogin());
+          if (response.redirected) {
             dispatch(completeAccountLogin());
-            if (response.loggedin) {
-              dispatch(logIntoAccountSuccess(response.success));
-              window.top.location = response.url;
-            } else {
-              console.log('authentication failure');
-            }
-          },
-        );
+            dispatch(logIntoAccountSuccess('Login Success'));
+            window.top.location = response.url;
+          } else {
+            return response.json();
+          }
+          return { status: false, reason: 'unknown' };
+
+          // if (response.status !== 401) {
+          //   return {
+          //     loggedin: true,
+          //     url: response.url,
+          //   };
+          // }
+          // return {
+          //   loggedin: false,
+          //   url: null,
+          // };
+        })
+        .then((jsonResponse) => {
+          console.log('Logged in status...', jsonResponse);
+          if (jsonResponse.status === false) {
+            dispatch(completeAccountLogin());
+            dispatch(logIntoAccountFailure(jsonResponse.reason));
+          }
+          dispatch(completeAccountLogin());
+        })
+        .catch(error => console.log('not logged in, unknown reason...', error.message));
     }
     if (email === null) {
       dispatch(stopAccountLogin());
